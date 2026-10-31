@@ -3,6 +3,38 @@
         <link rel="stylesheet" href="/style.css">
         <title>Host | Among Us Live</title>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+        <style>
+            form {
+                flex-direction:column;
+            }
+            #gameCode {
+                max-width:300px;
+            }
+            #gameFile {
+                margin:25px;
+                color:white;
+                background-color: #111111;
+                border:3px solid #ffffff;
+                border-radius:8px;
+                padding:10px;
+                padding-left:8px;
+                max-width:300px;
+                width:100%;
+            }
+            #gameFile::file-selector-button {
+                color:white;
+                background-color: #111111;
+                border:3px solid #ffffff;
+                border-radius:4px;
+                padding:5px;
+                margin-right:10px;
+                transition-duration:0.4s;
+            }
+            #gameFile::file-selector-button:hover {
+                color:black;
+                background-color: #ffffff;
+            }
+        </style>
     </head>
     <body>
         <div id="header">
@@ -11,7 +43,8 @@
         <div id="main">
             <h2 id="heading">Host A Game</h2>
             <form id="hostForm">
-                <input id="gameCode" type="text" placeholder="Enter Code" required>
+                <input id="gameCode" type="text" placeholder="Make a Join Code" required>
+                <input type="file" id="gameFile" required>
                 <button type="submit"><span class="material-symbols-outlined">group_add</span></button>
             </form>
         </div>
