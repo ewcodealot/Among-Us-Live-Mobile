@@ -7,6 +7,7 @@ body {
     font-weight: 500;
     font-style: normal;
     margin:0;
+    height:100vh;
 }
 #heading {
     text-align:center;
@@ -21,6 +22,8 @@ body {
     max-width:min(500px, calc(100% - 80px));
     margin-inline:auto;
     transition:0.2s;
+    color:white;
+    text-decoration:none;
 }
 .main-button:hover {
     transform:scale(1.05);
@@ -31,4 +34,7 @@ body {
     font-weight:300;
     font-size:12px;
     text-align:justify;
+    position:fixed;
+    bottom:0;
+    width:100%;
 }
