@@ -14,12 +14,16 @@ body {
 }
 .main-button {
     display:block;
-    background-image:linear-gradient(90deg, #45c8d1, rgb(37, 94, 168));
+    background-image:linear-gradient(270deg, #45c8d1, rgb(37, 94, 168));
     margin:10px;
     padding:15px;
     border-radius:8px;
-    max-width:min(500px, calc(100% - 40px));
+    max-width:min(500px, calc(100% - 80px));
     margin-inline:auto;
+    transition:0.2s;
+}
+.main-button:hover {
+    transform:scale(1.05);
 }
 #footer {
     padding:10px;
