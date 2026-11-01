@@ -1,4 +1,4 @@
-const socket = io('http://localhost:80');
+const socket = io();
 
 const hostForm = document.getElementById('hostForm');
 const hostLobby = document.getElementById('hostLobby');

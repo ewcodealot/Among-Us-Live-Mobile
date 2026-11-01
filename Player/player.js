@@ -12,7 +12,7 @@ joinForm.addEventListener('submit', function(e) {
 });
 
 // In player.js
-const socket = io('http://localhost:80');
+const socket = io();
 
 function joinLobby() {
     const name = document.getElementById('playerName').value.trim();
