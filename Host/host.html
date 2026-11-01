@@ -47,10 +47,18 @@
                 <input type="file" id="gameFile" required>
                 <button type="submit"><span class="material-symbols-outlined">group_add</span></button>
             </form>
+            <div id="hostLobby" style="display: none; text-align: center; color: white;">
+                <h2>Lobby Active!</h2>
+                <h3>Room Code: <span id="displayCode"></span></h3>
+                <h4>Connected Players:</h4>
+                <ul id="playerList" style="list-style: none; padding: 0;"></ul>
+                <button id="startGameBtn" style="margin-top: 20px;">Start Game</button>
+            </div>
         </div>
         <div id="footer">
             <p>© Copyright 2026 Emmett Wilson. Made with permission of the Loera Family. Not an official product of Innersloth LLC or its affiliates.</p>
         </div>
+        <script src="/socket.io/socket.io.js"></script>
         <script src="host.js"></script>
     </body>
 </html>

@@ -13,12 +13,14 @@
             <h2 id="heading">Join A Game</h2>
             <form id="joinForm">
                 <input id="gameCode" type="text" placeholder="Enter Code" required>
+                <input id="playerName" type="text" placeholder="Enter Name" required>
                 <button type="submit"><span class="material-symbols-outlined">person_add</span></button>
             </form>
         </div>
         <div id="footer">
             <p>© Copyright 2026 Emmett Wilson. Made with permission of the Loera Family. Not an official product of Innersloth LLC or its affiliates.</p>
         </div>
+        <script src="/socket.io/socket.io.js"></script>
         <script src="player.js"></script>
     </body>
 </html>
