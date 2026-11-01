@@ -18,7 +18,6 @@ hostForm.addEventListener('submit', (event) => {
         try {
             const gameConfig = JSON.parse(e.target.result);
 
-            // Send game creation request to backend
             socket.emit('host:create_game', { roomCode, config: gameConfig });
         } catch (err) {
             alert("Invalid JSON configuration file!");
@@ -27,15 +26,16 @@ hostForm.addEventListener('submit', (event) => {
     reader.readAsText(fileInput);
 });
 
-// 1. When game creation succeeds:
 socket.on('game_created_success', (data) => {
-    // Hide creation form, show active lobby
     hostForm.style.display = 'none';
     hostLobby.style.display = 'block';
     displayCode.textContent = data.roomCode;
 });
 
-// 2. Listen for joining players and update host screen live
+function triggerStartGame() {
+    socket.emit('host:start_game', { roomCode: displayCode.textContent });
+}
+
 socket.on('update_player_list', (players) => {
     playerList.innerHTML = '';
     players.forEach(p => {

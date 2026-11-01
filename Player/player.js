@@ -43,6 +43,32 @@ socket.on('update_player_list', (players) => {
     });
 });
 
+socket.on('game_started', (data) => {
+    // Hide waiting lobby, show active game screen
+    document.getElementById('playerWaitingLobby').style.display = 'none';
+    document.getElementById('gameplayView').style.display = 'block';
+
+    const roleDisplay = document.getElementById('roleDisplay');
+    roleDisplay.textContent = data.role;
+
+    const taskListElement = document.getElementById('playerTaskList');
+    taskListElement.innerHTML = '';
+
+    if (data.role === 'Impostor') {
+        roleDisplay.style.color = '#ff0055'; // Red for Impostor
+        taskListElement.innerHTML = '<li><b>Secret Objective:</b> Blend in, sabotage, and eliminate crewmates without getting caught!</li>';
+    } else {
+        roleDisplay.style.color = '#00ffff'; // Blue for Crewmate
+        // Render their checklist of tasks with titles, descriptions, and hints
+        data.tasks.forEach(task => {
+            const li = document.createElement('li');
+            li.style.marginBottom = '15px';
+            li.innerHTML = `<strong>${task.title}</strong><br><small>${task.description}</small><br><em>Hint: ${task.hint}</em>`;
+            taskListElement.appendChild(li);
+        });
+    }
+});
+
 socket.on('error_message', (msg) => {
     alert(msg);
 });
