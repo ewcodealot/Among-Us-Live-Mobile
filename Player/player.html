@@ -56,6 +56,29 @@
             #playerName::placeholder {
                 color:white;
             }
+            #gameplayView {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                width:100vw;
+                margin:0;
+            }
+            #info h2 {
+                text-align: center;
+            }
+            #tasks h3 {
+                text-align:center;
+            }
+            #tasks ul {
+                margin:20px;
+            }
+            #tasks li {
+                margin-bottom: 10px;
+            }
+            #tasks li input[type="checkbox"] {
+                margin-right: 10px;
+                transform:scale(1.25);
+            }
         </style>
     </head>
     <body>
@@ -74,11 +97,12 @@
         <!-- Active Gameplay View (Hidden initially) -->
         <div id="gameplayView" style="display: none;">
             <div id="info">
-                <h1>Your role is: <span id="roleDisplay"></span></h1>
+                <h2>Your role is: <span id="roleDisplay"></span></h2>
             </div>
             <div id="tasks">
                 <h3>Your Tasks:</h3>
-                <ul id="playerTaskList"></ul>
+                <ul id="playerTaskList">
+                </ul>
             </div>
         </div>
         <div id="footer">

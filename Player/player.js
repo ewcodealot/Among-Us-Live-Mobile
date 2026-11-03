@@ -46,6 +46,7 @@ socket.on('update_player_list', (players) => {
 socket.on('game_started', (data) => {
     document.getElementById('gameplayView').style.display = 'block';
     document.getElementById('main').style.display = 'none';
+    document.getElementById('header').style.display = 'none';
 
     const roleDisplay = document.getElementById('roleDisplay');
     roleDisplay.textContent = data.role;
