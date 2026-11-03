@@ -71,29 +71,8 @@ a {
 }
 form {
     display:flex;
-    align-items:center;
     justify-content:center;
     margin:15px;
-}
-#gameCode {
-    padding:10px;
-    border-radius:8px;
-    border:none;
-    font-size:16px;
-    width:100%;
-    max-width:200px;
-    display:block;
-    min-width:50px;
-    height:50px;
-    color:white;
-    background-color: #111111;
-    border:3px solid #ffffff;
-}
-#gameCode:focus {
-    outline:none;
-}
-#gameCode::placeholder {
-    color:white;
 }
 form button {
     padding:10px 20px;
@@ -106,4 +85,9 @@ form button {
     color:white;
     background-color: #111111;
     border:3px solid #ffffff;
+    max-width:100px;
+    width:50%;
+}
+ul {
+    list-style-type: none;
 }

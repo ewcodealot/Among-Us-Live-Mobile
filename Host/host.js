@@ -40,7 +40,7 @@ socket.on('update_player_list', (players) => {
     playerList.innerHTML = '';
     players.forEach(p => {
         const li = document.createElement('li');
-        li.textContent = `👤 ${p.name}`;
+        li.textContent = `${p.name}`;
         li.style.fontSize = '1.2rem';
         playerList.appendChild(li);
     });

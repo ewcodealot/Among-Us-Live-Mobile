@@ -29,7 +29,7 @@ function joinLobby() {
 socket.on('join_success', (data) => {
     document.getElementById('joinForm').style.display = 'none';
     //document.getElementById('playerWaitingLobby').style.display = 'block';
-    document.getElementById('heading').textContent = 'Waiting for Game to Start';
+    document.getElementById('heading').textContent = "You're In! Waiting for Game to Start";
 });
 
 socket.on('update_player_list', (players) => {
@@ -44,9 +44,8 @@ socket.on('update_player_list', (players) => {
 });
 
 socket.on('game_started', (data) => {
-    // Hide waiting lobby, show active game screen
-    document.getElementById('playerWaitingLobby').style.display = 'none';
     document.getElementById('gameplayView').style.display = 'block';
+    document.getElementById('main').style.display = 'none';
 
     const roleDisplay = document.getElementById('roleDisplay');
     roleDisplay.textContent = data.role;
@@ -56,17 +55,15 @@ socket.on('game_started', (data) => {
 
     if (data.role === 'Impostor') {
         roleDisplay.style.color = '#ff0055'; // Red for Impostor
-        taskListElement.innerHTML = '<li><b>Secret Objective:</b> Blend in, sabotage, and eliminate crewmates without getting caught!</li>';
     } else {
         roleDisplay.style.color = '#00ffff'; // Blue for Crewmate
-        // Render their checklist of tasks with titles, descriptions, and hints
-        data.tasks.forEach(task => {
-            const li = document.createElement('li');
-            li.style.marginBottom = '15px';
-            li.innerHTML = `<strong>${task.title}</strong><br><small>${task.description}</small><br><em>Hint: ${task.hint}</em>`;
-            taskListElement.appendChild(li);
-        });
     }
+    data.tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.style.marginBottom = '15px';
+        li.innerHTML = `<input type="checkbox" class="task-checkbox"><strong>${task.title}</strong><br><small>${task.description}</small><br><em>Hint: ${task.hint}</em>`;
+        taskListElement.appendChild(li);
+    });
 });
 
 socket.on('error_message', (msg) => {
