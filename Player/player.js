@@ -54,16 +54,33 @@ socket.on('game_started', (data) => {
     const taskListElement = document.getElementById('playerTaskList');
     taskListElement.innerHTML = '';
 
-    if (data.role === 'Impostor') {
-        roleDisplay.style.color = '#ff0055'; // Red for Impostor
-    } else {
-        roleDisplay.style.color = '#00ffff'; // Blue for Crewmate
-    }
+    //if (data.role === 'Impostor') {
+    //    roleDisplay.style.color = '#ff0055'; // Red for Impostor
+    //} else {
+    //    roleDisplay.style.color = '#00ffff'; // Blue for Crewmate
+    //}
+
     data.tasks.forEach(task => {
         const li = document.createElement('li');
         li.style.marginBottom = '15px';
-        li.innerHTML = `<input type="checkbox" class="task-checkbox"><strong>${task.title}</strong><br><small>${task.description}</small><br><em>Hint: ${task.hint}</em>`;
+        li.innerHTML = `<input type="checkbox" class="taskCheckbox"><strong>${task.title}</strong><br><small>${task.description}</small><br><em>Hint: ${task.hint}</em>`;
         taskListElement.appendChild(li);
+        const checkbox = li.querySelector('.taskCheckbox');
+        const isCompleted = task.completed === true;
+        checkbox.checked = isCompleted;
+        checkbox.disabled = isCompleted;
+        if (isCompleted) {
+            li.style.textDecoration = 'line-through';
+        }
+
+        checkbox.addEventListener('change', () => {
+            if (checkbox.checked) {
+                checkbox.disabled = true;
+                li.style.textDecoration = 'line-through';
+                console.log(`Player completed task ${task.title}`);
+                socket.emit('task:completed', { taskId: task.id });
+            }
+        });
     });
 });
 

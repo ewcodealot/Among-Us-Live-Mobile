@@ -4,65 +4,7 @@
         <title>Host | Among Us Live</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-        <style>
-            form {
-                flex-direction:column;
-                margin:0;
-                width:100vw;
-            }
-            form button {
-                margin-inline:auto;
-            }
-            #gameCode {
-                max-width:300px;
-                margin-inline:auto;
-            }
-            #gameFile {
-                margin:25px;
-                color:white;
-                background-color: #111111;
-                border:3px solid #ffffff;
-                border-radius:8px;
-                padding:10px;
-                padding-left:8px;
-                max-width:300px;
-                width:100%;
-                margin-inline:auto;
-            }
-            #gameFile::file-selector-button {
-                color:white;
-                background-color: #111111;
-                border:3px solid #ffffff;
-                border-radius:4px;
-                padding:5px;
-                margin-right:10px;
-                transition-duration:0.4s;
-            }
-            #gameFile::file-selector-button:hover {
-                color:black;
-                background-color: #ffffff;
-            }
-            #gameCode {
-                padding:10px;
-                border-radius:8px;
-                border:none;
-                font-size:16px;
-                width:100%;
-                max-width:200px;
-                display:block;
-                min-width:50px;
-                height:50px;
-                color:white;
-                background-color: #111111;
-                border:3px solid #ffffff;
-            }
-            #gameCode:focus {
-                outline:none;
-            }
-            #gameCode::placeholder {
-                color:white;
-            }
-        </style>
+        <link rel="stylesheet" href="host.css">
     </head>
     <body>
         <div id="header">
@@ -70,7 +12,7 @@
         </div>
         <div id="main">
             <h2 id="heading">Host A Game</h2>
-            <form id="hostForm">
+            <form id="hostForm" style="display:flex;">
                 <input id="gameCode" type="text" placeholder="Make a Join Code" required>
                 <input type="file" id="gameFile" required>
                 <button type="submit"><span class="material-symbols-outlined">group_add</span></button>
@@ -81,6 +23,20 @@
                 <h4>Connected Players:</h4>
                 <ul id="playerList" style="list-style: none; padding: 0;"></ul>
                 <button id="startGameBtn" onclick="triggerStartGame()" style="margin-top: 20px; padding: 10px 20px; font-size: 1.2rem;">Start Game</button>
+            </div>
+            <div id="activeGameView" style="display:none;">
+                <h2 id="activeGameRoomCode">Room Code: ####</h2>
+                <button class="collapsibleButton">Player List</button>
+                <div class="collapsible">
+                    <ul id="activeGamePlayers">
+
+                    </ul>
+                </div>
+                <div id="gameUpdates" aria-label="Game updates">
+                    <h3>Game Updates</h3>
+                    <ul id="updateList" role="log" aria-live="polite" aria-relevant="additions">
+                    </ul>
+                </div>
             </div>
         </div>
         <div id="footer">
