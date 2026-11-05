@@ -74,6 +74,7 @@ form button {
     margin-inline:auto;
     margin:0;
     padding:0px;
+    margin-top: 15px;
 }
 .collapsible ul {
     list-style: none;
@@ -131,4 +132,21 @@ form button {
 }
 #updateList time {
     color: #8d9990;
+}
+#hostControls {
+    display:flex;
+    flex-direction:column;
+    margin-inline:auto;
+}
+.hostControl {
+    padding:8px;
+    border-radius:8px;
+    font-size:16px;
+    display:block;
+    color:white;
+    background-color: #111111;
+    border:2px solid #ffffff;
+    width: 50%;
+    margin-inline: auto;
+    margin-bottom: 15px;
 }

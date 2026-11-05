@@ -24,11 +24,39 @@
             <div id="info">
                 <h2>Your role is: <span id="roleDisplay"></span></h2>
             </div>
-            <div id="tasks">
+            <button class="collapsibleButton">Tasks</button>
+            <div id="tasks" class="collapsible">
                 <h3>Your Tasks:</h3>
                 <ul id="playerTaskList">
                 </ul>
             </div>
+            <button class="collapsibleButton">Players</button>
+            <div id="playersList" class="collapsible">
+                <h3>Alive:</h3>
+                <ul id="playerKnownListAlive">
+                </ul>
+                <h3>Dead:</h3>
+                <ul id="playerKnownListDead">
+                </ul>
+            </div>
+            <button class="collapsibleButton">Actions</button>
+            <div id="actions" class="collapsible">
+                <button id="emergencyMeeting" onClick="emergencyMeeting()">
+                    <span class="material-symbols-outlined" style="font-size: 48px;">e911_emergency</span>
+                    <span>Emergency Meeting</span>
+                </button>
+            </div>
+            <button class="collapsibleButton">Progress</button>
+            <div id="progress" class="collapsible">
+                <h3>Total Tasks Done:</h3>
+                <div id="totalTasksCont">
+                    <span id="totalTasks"></span>
+                </div>
+            </div>
+        </div>
+        <div id="emergencyPopup" role="alertdialog" aria-modal="true" aria-hidden="true" style="display:none;">
+            <h1>Emergency Meeting Called!</h1>
+            <h2>Meet together and discuss</h2>
         </div>
         <div id="footer">
             <p>© Copyright 2026 Emmett Wilson. Made with permission of the Loera Family. Not an official product of Innersloth LLC or its affiliates.</p>

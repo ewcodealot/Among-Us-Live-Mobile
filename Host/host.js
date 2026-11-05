@@ -4,6 +4,11 @@ const hostForm = document.getElementById('hostForm');
 const hostLobby = document.getElementById('hostLobby');
 const displayCode = document.getElementById('displayCode');
 const playerList = document.getElementById('playerList');
+const emergencyMeetingButton = document.getElementById('hostEmergencyMeeting');
+
+emergencyMeetingButton.addEventListener('click', () => {
+    socket.emit('host:meeting_toggle', { roomCode: displayCode.textContent });
+});
 
 hostForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -71,6 +76,12 @@ socket.on('host:started_game', (data) => {
     hostForm.style.display = 'none';
     document.getElementById('activeGameView').style.display = 'block';
     document.getElementById('activeGameRoomCode').textContent = `Room Code: ${data.roomCode}`;
+});
+
+socket.on('meeting:state', ({ active }) => {
+    emergencyMeetingButton.textContent = active
+        ? 'End Emergency Meeting (Start Voting)'
+        : 'Emergency Meeting';
 });
 
 //Collapsibles

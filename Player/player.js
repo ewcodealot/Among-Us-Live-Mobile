@@ -5,6 +5,21 @@ var inGame = false;
 const gameCode = document.getElementById("gameCode");
 const joinForm = document.getElementById("joinForm");
 
+//Collapsibles
+var col = document.getElementsByClassName("collapsibleButton");
+
+for (var i = 0; i < col.length; i++) {
+  col[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    }
+  });
+}
+
 //Event Listeners
 joinForm.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -82,6 +97,16 @@ socket.on('game_started', (data) => {
             }
         });
     });
+});
+
+function emergencyMeeting() {
+    socket.emit('player:emergency_meeting');
+}
+
+socket.on('meeting:state', ({ active }) => {
+    const popup = document.getElementById('emergencyPopup');
+    popup.style.display = active ? 'flex' : 'none';
+    popup.setAttribute('aria-hidden', String(!active));
 });
 
 socket.on('error_message', (msg) => {
