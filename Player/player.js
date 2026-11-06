@@ -1,5 +1,8 @@
 //Variables
 var inGame = false;
+let currentRole = null;
+let currentPlayerId = null;
+let knownPlayers = [];
 
 //Elements
 const gameCode = document.getElementById("gameCode");
@@ -41,6 +44,95 @@ function joinLobby() {
     socket.emit('player:join_game', { roomCode: code, playerName: name });
 }
 
+function renderPlayerLists() {
+    const aliveList = document.getElementById('playerKnownListAlive');
+    const deadList = document.getElementById('playerKnownListDead');
+    aliveList.replaceChildren();
+    deadList.replaceChildren();
+
+    knownPlayers.forEach((player) => {
+        const item = document.createElement('li');
+        item.textContent = player.name;
+        (player.dead ? deadList : aliveList).appendChild(item);
+    });
+
+    const playersPanel = document.getElementById('playersList');
+    if (playersPanel.style.maxHeight) {
+        playersPanel.style.maxHeight = `${playersPanel.scrollHeight}px`;
+    }
+
+    const currentPlayer = knownPlayers.find((player) => player.id === currentPlayerId);
+    const canKill = currentRole === 'Impostor' && currentPlayer && !currentPlayer.dead;
+    document.getElementById('killPlayer').style.display = canKill ? 'flex' : 'none';
+
+    if (!canKill) {
+        closeKillPlayerPicker();
+    }
+}
+
+function renderKillPlayerPicker() {
+    const list = document.getElementById('killPlayerList');
+    list.replaceChildren();
+
+    const eligiblePlayers = knownPlayers.filter((player) =>
+        player.connected && player.canBeKilled && !player.dead &&
+        player.id && player.id !== currentPlayerId
+    );
+
+    if (eligiblePlayers.length === 0) {
+        const item = document.createElement('li');
+        item.textContent = 'No players available';
+        list.appendChild(item);
+        return;
+    }
+
+    eligiblePlayers.forEach((player) => {
+        const item = document.createElement('li');
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'kill-player-target';
+        button.textContent = player.name;
+        button.addEventListener('click', () => {
+            list.querySelectorAll('button').forEach((targetButton) => {
+                targetButton.disabled = true;
+            });
+            socket.emit('player:kill_player', { targetId: player.id });
+        });
+        item.appendChild(button);
+        list.appendChild(item);
+    });
+}
+
+function killPlayer() {
+    const currentPlayer = knownPlayers.find((player) => player.id === currentPlayerId);
+    if (currentRole !== 'Impostor' || !currentPlayer || currentPlayer.dead) return;
+
+    renderKillPlayerPicker();
+    const picker = document.getElementById('killPlayerPicker');
+    picker.style.display = 'flex';
+    picker.setAttribute('aria-hidden', 'false');
+}
+
+function closeKillPlayerPicker() {
+    const picker = document.getElementById('killPlayerPicker');
+    picker.style.display = 'none';
+    picker.setAttribute('aria-hidden', 'true');
+}
+
+function updatePlayerRole(role) {
+    currentRole = role;
+    document.getElementById('roleDisplay').textContent = role;
+
+    const isDead = role === 'Dead';
+    document.getElementById('actionsTab').style.display = isDead ? 'none' : '';
+    document.getElementById('actions').style.display = isDead ? 'none' : '';
+    document.getElementById('killPlayer').style.display = role === 'Impostor' ? 'flex' : 'none';
+
+    if (isDead) {
+        closeKillPlayerPicker();
+    }
+}
+
 socket.on('join_success', (data) => {
     document.getElementById('joinForm').style.display = 'none';
     //document.getElementById('playerWaitingLobby').style.display = 'block';
@@ -59,12 +151,11 @@ socket.on('update_player_list', (players) => {
 });
 
 socket.on('game_started', (data) => {
+    updatePlayerRole(data.role);
+
     document.getElementById('gameplayView').style.display = 'block';
     document.getElementById('main').style.display = 'none';
     document.getElementById('header').style.display = 'none';
-
-    const roleDisplay = document.getElementById('roleDisplay');
-    roleDisplay.textContent = data.role;
 
     const taskListElement = document.getElementById('playerTaskList');
     taskListElement.innerHTML = '';
@@ -96,6 +187,35 @@ socket.on('game_started', (data) => {
                 socket.emit('task:completed', { taskId: task.id });
             }
         });
+    });
+});
+
+socket.on('players:state', ({ players, playerId }) => {
+    knownPlayers = players;
+    currentPlayerId = playerId;
+    renderPlayerLists();
+
+    const picker = document.getElementById('killPlayerPicker');
+    if (picker.getAttribute('aria-hidden') === 'false') {
+        renderKillPlayerPicker();
+    }
+});
+
+socket.on('player:kill_result', ({ success, message }) => {
+    if (success) {
+        closeKillPlayerPicker();
+        return;
+    }
+
+    alert(message);
+    renderKillPlayerPicker();
+});
+
+socket.on('player:died', () => {
+    updatePlayerRole('Dead');
+    document.getElementById('deadPopup').style.display = 'flex';
+    document.getElementById('confirmDead').addEventListener('click', () => {
+        document.getElementById('deadPopup').style.display = 'none';
     });
 });
 

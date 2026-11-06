@@ -21,7 +21,9 @@
         </div>
 
         <div id="gameplayView" style="display: none;">
-            <div id="info">
+            <h2 style="text-align: center;">Among Us Live</h2>
+            <button class="collapsibleButton">Role</button>
+            <div id="info" class="collapsible">
                 <h2>Your role is: <span id="roleDisplay"></span></h2>
             </div>
             <button class="collapsibleButton">Tasks</button>
@@ -39,11 +41,19 @@
                 <ul id="playerKnownListDead">
                 </ul>
             </div>
-            <button class="collapsibleButton">Actions</button>
+            <button id="actionsTab" class="collapsibleButton">Actions</button>
             <div id="actions" class="collapsible">
                 <button id="emergencyMeeting" onClick="emergencyMeeting()">
                     <span class="material-symbols-outlined" style="font-size: 48px;">e911_emergency</span>
                     <span>Emergency Meeting</span>
+                </button>
+                <button id="bodyFound" onClick="bodyFound()">
+                    <span class="material-symbols-outlined" style="font-size: 48px;">skull</span>
+                    <span>Report Dead Body</span>
+                </button>
+                <button id="killPlayer" onClick="killPlayer()">
+                    <span class="material-symbols-outlined" style="font-size: 48px;">sports_martial_arts</span>
+                    <span>Kill Player</span>
                 </button>
             </div>
             <button class="collapsibleButton">Progress</button>
@@ -57,6 +67,22 @@
         <div id="emergencyPopup" role="alertdialog" aria-modal="true" aria-hidden="true" style="display:none;">
             <h1>Emergency Meeting Called!</h1>
             <h2>Meet together and discuss</h2>
+        </div>
+        <div id="bodyFoundPopup" role="alertdialog" aria-modal="true" aria-hidden="true" style="display:none;">
+            <h1>Dead Body Found!</h1>
+            <h2>A body has been discovered. Meet at player ####.</h2>
+        </div>
+        <div id="deadPopup" role="alertdialog" aria-modal="true" aria-hidden="true" style="display:none;">
+            <h1>You are Dead!</h1>
+            <h2>Finish tasks to win, you may not talk or vote.</h2>
+            <button id="confirmDead">Continue</button>
+        </div>
+        <div id="killPlayerPicker" class="kill-player-picker" role="dialog" aria-modal="true" aria-labelledby="killPlayerPickerTitle" aria-hidden="true" style="display:none;">
+            <div class="kill-player-picker-content">
+                <h2 id="killPlayerPickerTitle">Pick a Player to Kill</h2>
+                <ul id="killPlayerList" style="list-style: none; padding: 0;"></ul>
+                <button id="closeKillPlayerPicker" type="button" onclick="closeKillPlayerPicker()">Cancel</button>
+            </div>
         </div>
         <div id="footer">
             <p>© Copyright 2026 Emmett Wilson. Not an official product of Innersloth LLC or its affiliates.</p>
