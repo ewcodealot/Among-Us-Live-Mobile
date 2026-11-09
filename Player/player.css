@@ -169,6 +169,29 @@ form button {
     margin-top:10px;
     margin-bottom:10px;
 }
+#sabotageButton {
+    padding:30px;
+    margin-inline:auto;
+    border-radius:8px;
+    font-size:16px;
+    display:flex;
+    flex-direction:column;
+    min-width:175px;
+    background-color:#111111;
+    border:3px solid #ff0000;
+    margin-top:20px;
+    transition-duration:0.3s;
+    color:red;
+    width:40%;
+}
+#sabotageButton:hover {
+    background-color:#ff0000;
+    color:white;
+}
+#sabotageButton span {
+    margin-top:10px;
+    margin-bottom:10px;
+}
 .kill-player-picker {
     position:fixed;
     inset:0;
@@ -189,8 +212,30 @@ form button {
     background-color:#111111;
     text-align:center;
 }
+.sabotage-picker {
+    position:fixed;
+    inset:0;
+    z-index:101;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background-color:rgba(0, 0, 0, 0.8);
+}
+.sabotage-picker-content {
+    width:min(100%, 400px);
+    max-height:80vh;
+    overflow-y:auto;
+    padding:20px;
+    border:3px solid #ff0000;
+    border-radius:8px;
+    background-color:#111111;
+    text-align:center;
+}
 .kill-player-target,
-#closeKillPlayerPicker {
+#closeKillPlayerPicker,
+.sabotage-target,
+#closeSabotagePicker {
     width:100%;
     padding:12px;
     margin:8px 0;
@@ -202,14 +247,21 @@ form button {
     cursor:pointer;
 }
 .kill-player-target:hover,
-#closeKillPlayerPicker:hover {
+#closeKillPlayerPicker:hover,
+.sabotage-target:hover,
+#closeSabotagePicker:hover {
     background-color:#ff0000;
 }
 .kill-player-target:disabled {
     opacity:0.6;
     cursor:wait;
 }
-#emergencyPopup {
+.sabotage-target:disabled {
+    opacity:0.6;
+    cursor:wait;
+}
+#emergencyPopup,
+#sabotageAlertPopup {
     text-align:center;
     margin:0;
     padding:0px;
@@ -262,7 +314,8 @@ form button {
     50% { background-color: rgba(255, 0, 0, 0.95); }
     100% { background-color: rgba(0, 0, 0, 0.8); }
 }
-#confirmDead {
+#confirmDead,
+#confirmSabotageAlert {
     margin-inline:auto;
     padding:10px 20px;
     border-radius:8px;
@@ -276,4 +329,42 @@ form button {
     background-color: #111111;
     border:3px solid #ffffff;
     margin-top: 20px;
+}
+#sabotagePicker {
+    position:fixed;
+    inset:0;
+    z-index:101;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background-color:rgba(0, 0, 0, 0.8);
+}
+.sabotage-target,
+#closeSabotagePicker {
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border:2px solid #ff0000;
+    border-radius:8px;
+    background-color:#111111;
+    color:white;
+    font:inherit;
+    cursor:pointer;
+}
+.sabotage-target:hover,
+#closeSabotagePicker:hover {
+    background-color:#ff0000;
+}
+.sabotage-target:disabled {
+    opacity:0.6;
+    cursor:wait;
+}
+#playerKnownListAlive{
+    margin:0;
+    padding:0;
+}
+#playerKnownListDead{
+    margin:0;
+    padding:0;
 }

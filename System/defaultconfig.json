@@ -1,0 +1,63 @@
+{
+  "gameSettings": {
+    "impostorCount": 1,
+    "killCooldownSeconds": 30,
+    "discussionTimeSeconds": 60,
+    "votingTimeSeconds": 45,
+    "emergencyMeetingsPerPlayer": 2
+  },
+  "tasks": [
+    {
+      "id": "task_01",
+      "title": "Calibrate Reactor",
+      "description": "Go to the main utility closet and align the power fluctuations on the control panel.",
+      "hint": "Check near the breaker box by the back door.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "task_02",
+      "title": "Download Data",
+      "description": "Connect to the terminal in the study room and wait for the upload progress bar to finish.",
+      "hint": "Look for the laptop setup on the main desk.",
+      "difficulty": "medium"
+    },
+    {
+      "id": "task_03",
+      "title": "Fix Wiring",
+      "description": "Match the colored wires correctly in the hallway junction box.",
+      "hint": "Red to red, blue to blue—don't cross them up!",
+      "difficulty": "hard"
+    },
+    {
+      "id": "task_04",
+      "title": "Water the Plants",
+      "description": "Find the watering can in the kitchen and give the living room ferns a drink.",
+      "hint": "The green plants by the window are looking thirsty.",
+      "difficulty": "easy"
+    },
+    {
+      "id": "task_05",
+      "title": "Clear Asteroids",
+      "description": "Scan the backyard or patio area and tap the targets displayed on your mobile screen.",
+      "hint": "Head outside and look toward the garden fence.",
+      "difficulty": "medium"
+    }
+  ],
+  "sabotages": [
+    {
+        "id": "sabotage_01",
+        "title": "Reactor Meltdown",
+        "description": "The reactor is overheating! Fix it before time runs out."
+    },
+    {
+        "id": "sabotage_02",
+        "title": "Oxygen Depletion",
+        "description": "The ship has lost oxygen! Restore it before everyone suffocates."
+    },
+    {
+        "id": "sabotage_03",
+        "title": "Power Outage",
+        "description": "Power down! Fix it before the systems become unstable."
+    }
+  ]
+}

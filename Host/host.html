@@ -14,7 +14,8 @@
             <h2 id="heading">Host A Game</h2>
             <form id="hostForm" style="display:flex;">
                 <input id="gameCode" type="text" placeholder="Make a Join Code" required>
-                <input type="file" id="gameFile" required>
+                <label for="gameFile">Configuration JSON (optional)</label>
+                <input type="file" id="gameFile" accept=".json,application/json">
                 <button type="submit"><span class="material-symbols-outlined">group_add</span></button>
             </form>
             <div id="hostLobby" style="display: none; text-align: center; color: white;">
@@ -36,10 +37,13 @@
                 <div class="collapsible" id="hostControls">
                     <button class="hostControl">Pause Game</button>
                     <button class="hostControl">Change Player Status</button>
-                    <button class="hostControl" id="hostEmergencyMeeting">Emergency Meeting</button>
                     <button class="hostControl">Sabotages</button>
                     <button class="hostControl">Remove Player</button>
                     <button class="hostControl">End Game</button>
+                </div>
+                <div id="hostGameActions" aria-label="Host game actions">
+                    <button class="hostControl" id="hostEmergencyMeeting">Emergency Meeting</button>
+                    <button class="hostControl" id="hostCompleteSabotage" disabled>Complete Sabotage</button>
                 </div>
                 <div id="gameUpdates" aria-label="Game updates">
                     <h3>Game Updates</h3>

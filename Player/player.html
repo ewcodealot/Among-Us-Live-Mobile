@@ -55,6 +55,10 @@
                     <span class="material-symbols-outlined" style="font-size: 48px;">sports_martial_arts</span>
                     <span>Kill Player</span>
                 </button>
+                <button id="sabotageButton" onClick="sabotage()" style="display:none;">
+                    <span class="material-symbols-outlined" style="font-size: 48px;">warning</span>
+                    <span>Sabotage</span>
+                </button>
             </div>
             <button class="collapsibleButton">Progress</button>
             <div id="progress" class="collapsible">
@@ -72,6 +76,11 @@
             <h1>Dead Body Found!</h1>
             <h2>A body has been discovered. Meet at player ####.</h2>
         </div>
+        <div id="sabotageAlertPopup" role="alertdialog" aria-modal="true" aria-labelledby="sabotageAlertTitle" aria-describedby="sabotageAlertDescription" aria-hidden="true" style="display:none;">
+            <h1 id="sabotageAlertTitle">Sabotage!</h1>
+            <h2 id="sabotageAlertDescription"></h2>
+            <button id="confirmSabotageAlert" type="button">Continue</button>
+        </div>
         <div id="deadPopup" role="alertdialog" aria-modal="true" aria-hidden="true" style="display:none;">
             <h1>You are Dead!</h1>
             <h2>Finish tasks to win, you may not talk or vote.</h2>
@@ -82,6 +91,13 @@
                 <h2 id="killPlayerPickerTitle">Pick a Player to Kill</h2>
                 <ul id="killPlayerList" style="list-style: none; padding: 0;"></ul>
                 <button id="closeKillPlayerPicker" type="button" onclick="closeKillPlayerPicker()">Cancel</button>
+            </div>
+        </div>
+        <div id="sabotagePicker" class="sabotage-picker" role="dialog" aria-modal="true" aria-labelledby="sabotagePickerTitle" aria-hidden="true" style="display:none;">
+            <div class="sabotage-picker-content">
+                <h2 id="sabotagePickerTitle">Sabotage Options</h2>
+                <ul id="sabotageList" style="list-style: none; padding: 0;"></ul>
+                <button id="closeSabotagePicker" type="button" onclick="closeSabotagePicker()">Cancel</button>
             </div>
         </div>
         <div id="footer">

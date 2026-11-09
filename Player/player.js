@@ -63,10 +63,15 @@ function renderPlayerLists() {
 
     const currentPlayer = knownPlayers.find((player) => player.id === currentPlayerId);
     const canKill = currentRole === 'Impostor' && currentPlayer && !currentPlayer.dead;
+    const canSabotage = canKill && sabotages.length > 0;
     document.getElementById('killPlayer').style.display = canKill ? 'flex' : 'none';
+    document.getElementById('sabotageButton').style.display = canSabotage ? 'flex' : 'none';
 
     if (!canKill) {
         closeKillPlayerPicker();
+    }
+    if (!canSabotage) {
+        closeSabotagePicker();
     }
 }
 
@@ -119,6 +124,45 @@ function closeKillPlayerPicker() {
     picker.setAttribute('aria-hidden', 'true');
 }
 
+var sabotages = [];
+
+function renderSabotagePicker() {
+    const list = document.getElementById('sabotageList');
+    list.replaceChildren();
+
+    sabotages.forEach((sabotage) => {
+        const item = document.createElement('li');
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'sabotage-target';
+        button.textContent = sabotage.title;
+        button.addEventListener('click', () => {
+            list.querySelectorAll('button').forEach((targetButton) => {
+                targetButton.disabled = true;
+            });
+            socket.emit('player:sabotage', { sabotageId: sabotage.id });
+        });
+        item.appendChild(button);
+        list.appendChild(item);
+    });
+}
+
+function sabotage() {
+    const currentPlayer = knownPlayers.find((player) => player.id === currentPlayerId);
+    if (currentRole !== 'Impostor' || !currentPlayer || currentPlayer.dead) return;
+
+    renderSabotagePicker();
+    const picker = document.getElementById('sabotagePicker');
+    picker.style.display = 'flex';
+    picker.setAttribute('aria-hidden', 'false');
+}
+
+function closeSabotagePicker() {
+    const picker = document.getElementById('sabotagePicker');
+    picker.style.display = 'none';
+    picker.setAttribute('aria-hidden', 'true');
+}
+
 function updatePlayerRole(role) {
     currentRole = role;
     document.getElementById('roleDisplay').textContent = role;
@@ -127,9 +171,12 @@ function updatePlayerRole(role) {
     document.getElementById('actionsTab').style.display = isDead ? 'none' : '';
     document.getElementById('actions').style.display = isDead ? 'none' : '';
     document.getElementById('killPlayer').style.display = role === 'Impostor' ? 'flex' : 'none';
+    document.getElementById('sabotageButton').style.display =
+        role === 'Impostor' && sabotages.length > 0 ? 'flex' : 'none';
 
     if (isDead) {
         closeKillPlayerPicker();
+        closeSabotagePicker();
     }
 }
 
@@ -151,6 +198,7 @@ socket.on('update_player_list', (players) => {
 });
 
 socket.on('game_started', (data) => {
+    sabotages = Array.isArray(data.sabotages) ? data.sabotages : [];
     updatePlayerRole(data.role);
 
     document.getElementById('gameplayView').style.display = 'block';
@@ -169,9 +217,17 @@ socket.on('game_started', (data) => {
     data.tasks.forEach(task => {
         const li = document.createElement('li');
         li.style.marginBottom = '15px';
-        li.innerHTML = `<input type="checkbox" class="taskCheckbox"><strong>${task.title}</strong><br><small>${task.description}</small><br><em>Hint: ${task.hint}</em>`;
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'taskCheckbox';
+        const title = document.createElement('strong');
+        title.textContent = task.title;
+        const description = document.createElement('small');
+        description.textContent = task.description;
+        const hint = document.createElement('em');
+        hint.textContent = `Hint: ${task.hint}`;
+        li.append(checkbox, title, document.createElement('br'), description, document.createElement('br'), hint);
         taskListElement.appendChild(li);
-        const checkbox = li.querySelector('.taskCheckbox');
         const isCompleted = task.completed === true;
         checkbox.checked = isCompleted;
         checkbox.disabled = isCompleted;
@@ -199,6 +255,11 @@ socket.on('players:state', ({ players, playerId }) => {
     if (picker.getAttribute('aria-hidden') === 'false') {
         renderKillPlayerPicker();
     }
+
+    const sabotagePicker = document.getElementById('sabotagePicker');
+    if (sabotagePicker.getAttribute('aria-hidden') === 'false') {
+        renderSabotagePicker();
+    }
 });
 
 socket.on('player:kill_result', ({ success, message }) => {
@@ -209,6 +270,38 @@ socket.on('player:kill_result', ({ success, message }) => {
 
     alert(message);
     renderKillPlayerPicker();
+});
+
+socket.on('player:sabotage_result', ({ success, message }) => {
+    if (success) {
+        closeSabotagePicker();
+        return;
+    }
+
+    alert(message);
+    renderSabotagePicker();
+});
+
+socket.on('sabotage:started', ({ title, description }) => {
+    document.getElementById('sabotageAlertTitle').textContent = title;
+    document.getElementById('sabotageAlertDescription').textContent = description;
+    const popup = document.getElementById('sabotageAlertPopup');
+    popup.style.display = 'flex';
+    popup.setAttribute('aria-hidden', 'false');
+});
+
+socket.on('sabotage:completed', ({ title }) => {
+    document.getElementById('sabotageAlertTitle').textContent = 'Sabotage Resolved';
+    document.getElementById('sabotageAlertDescription').textContent = `${title} has been completed.`;
+    const popup = document.getElementById('sabotageAlertPopup');
+    popup.style.display = 'flex';
+    popup.setAttribute('aria-hidden', 'false');
+});
+
+document.getElementById('confirmSabotageAlert').addEventListener('click', () => {
+    const popup = document.getElementById('sabotageAlertPopup');
+    popup.style.display = 'none';
+    popup.setAttribute('aria-hidden', 'true');
 });
 
 socket.on('player:died', () => {

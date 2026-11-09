@@ -14,6 +14,12 @@ form {
     margin:0;
     width:100vw;
 }
+#hostForm label {
+    color:white;
+    text-align:center;
+    margin-top: 15px;
+    margin-bottom: -15px;
+}
 form button {
     margin-inline:auto;
 }
@@ -138,6 +144,11 @@ form button {
     flex-direction:column;
     margin-inline:auto;
 }
+#hostGameActions {
+    display:flex;
+    flex-direction:column;
+    margin:15px auto 0;
+}
 .hostControl {
     padding:8px;
     border-radius:8px;
@@ -149,4 +160,8 @@ form button {
     width: 50%;
     margin-inline: auto;
     margin-bottom: 15px;
+}
+.hostControl:disabled {
+    opacity:0.5;
+    cursor:not-allowed;
 }

@@ -5,9 +5,14 @@ const hostLobby = document.getElementById('hostLobby');
 const displayCode = document.getElementById('displayCode');
 const playerList = document.getElementById('playerList');
 const emergencyMeetingButton = document.getElementById('hostEmergencyMeeting');
+const completeSabotageButton = document.getElementById('hostCompleteSabotage');
 
 emergencyMeetingButton.addEventListener('click', () => {
     socket.emit('host:meeting_toggle', { roomCode: displayCode.textContent });
+});
+
+completeSabotageButton.addEventListener('click', () => {
+    socket.emit('host:complete_sabotage', { roomCode: displayCode.textContent });
 });
 
 hostForm.addEventListener('submit', (event) => {
@@ -16,7 +21,11 @@ hostForm.addEventListener('submit', (event) => {
     const roomCode = document.getElementById('gameCode').value.trim().toUpperCase();
     const fileInput = document.getElementById('gameFile').files[0];
 
-    if (!roomCode || !fileInput) return;
+    if (!roomCode) return;
+    if (!fileInput) {
+        socket.emit('host:create_game', { roomCode });
+        return;
+    }
 
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -28,6 +37,7 @@ hostForm.addEventListener('submit', (event) => {
             alert("Invalid JSON configuration file!");
         }
     };
+    reader.onerror = () => alert('Could not read the configuration file.');
     reader.readAsText(fileInput);
 });
 
@@ -35,6 +45,10 @@ socket.on('game_created_success', (data) => {
     hostForm.style.display = 'none';
     hostLobby.style.display = 'block';
     displayCode.textContent = data.roomCode;
+});
+
+socket.on('error_message', (message) => {
+    alert(message);
 });
 
 function triggerStartGame() {
@@ -82,6 +96,10 @@ socket.on('meeting:state', ({ active }) => {
     emergencyMeetingButton.textContent = active
         ? 'End Emergency Meeting (Start Voting)'
         : 'Emergency Meeting';
+});
+
+socket.on('sabotage:state', ({ active }) => {
+    completeSabotageButton.disabled = !active;
 });
 
 //Collapsibles
