@@ -165,3 +165,9 @@ form button {
     opacity:0.5;
     cursor:not-allowed;
 }
+#startGameBtn {
+    border: 3px white solid;
+    border-radius: 8px;
+    background-color: #111111;
+    color: white;
+}
