@@ -3,10 +3,82 @@ var inGame = false;
 let currentRole = null;
 let currentPlayerId = null;
 let knownPlayers = [];
+let selectedPlayerColor;
+let isWaitingLobby = false;
 
 //Elements
 const gameCode = document.getElementById("gameCode");
 const joinForm = document.getElementById("joinForm");
+const playerNameInput = document.getElementById('playerName');
+const playerColor = document.getElementById('playerColor');
+const playerColorSelect = document.getElementById('playerColorSelect');
+
+function isValidPlayerColor(color) {
+    return typeof color === 'string' && /^#[0-9a-f]{6}$/i.test(color);
+}
+
+function colorStorageKey(name) {
+    return `amongUsLive:playerColor:${name.trim().toLowerCase()}`;
+}
+
+function randomPlayerColor() {
+    const channel = () => Math.floor(128 + Math.random() * 128).toString(16).padStart(2, '0');
+    return `#${channel()}${channel()}${channel()}`;
+}
+
+function getMutedPlayerColor(color) {
+    const channels = color.slice(1).match(/.{2}/g).map((channel) => parseInt(channel, 16));
+    return `#${channels.map((channel) =>
+        Math.round(channel * 0.4 + 17 * 0.6).toString(16).padStart(2, '0')
+    ).join('')}`;
+}
+
+function updatePageBackground(color) {
+    if (isValidPlayerColor(color)) {
+        document.body.style.backgroundColor = getMutedPlayerColor(color);
+    }
+}
+
+function applyPlayerColor(element, color) {
+    if (!isValidPlayerColor(color)) return;
+
+    element.classList.add('player-entry');
+    element.style.color = '#ffffff';
+    element.style.backgroundColor = color;
+}
+
+selectedPlayerColor = randomPlayerColor();
+playerColorSelect.value = selectedPlayerColor;
+
+if (playerNameInput.value.trim()) {
+    const storedColor = localStorage.getItem(colorStorageKey(playerNameInput.value));
+    if (isValidPlayerColor(storedColor)) {
+        selectedPlayerColor = storedColor;
+        playerColorSelect.value = storedColor;
+    }
+}
+updatePageBackground(selectedPlayerColor);
+
+playerNameInput.addEventListener('input', () => {
+    const storedColor = localStorage.getItem(colorStorageKey(playerNameInput.value));
+    if (!isValidPlayerColor(storedColor)) return;
+
+    selectedPlayerColor = storedColor;
+    playerColorSelect.value = storedColor;
+    updatePageBackground(selectedPlayerColor);
+});
+
+playerColorSelect.addEventListener('input', () => {
+    selectedPlayerColor = playerColorSelect.value;
+    updatePageBackground(selectedPlayerColor);
+    const name = playerNameInput.value.trim();
+    if (name) {
+        localStorage.setItem(colorStorageKey(name), selectedPlayerColor);
+    }
+    if (isWaitingLobby) {
+        socket.emit('player:update_color', { color: selectedPlayerColor });
+    }
+});
 
 //Collapsibles
 var col = document.getElementsByClassName("collapsibleButton");
@@ -33,7 +105,7 @@ joinForm.addEventListener('submit', function(e) {
 const socket = io();
 
 function joinLobby() {
-    const name = document.getElementById('playerName').value.trim();
+    const name = playerNameInput.value.trim();
     const code = document.getElementById('gameCode').value.trim().toUpperCase();
 
     if (!name || !code) {
@@ -41,7 +113,12 @@ function joinLobby() {
         return;
     }
 
-    socket.emit('player:join_game', { roomCode: code, playerName: name });
+    localStorage.setItem(colorStorageKey(name), selectedPlayerColor);
+    socket.emit('player:join_game', {
+        roomCode: code,
+        playerName: name,
+        playerColor: selectedPlayerColor
+    });
 }
 
 function renderPlayerLists() {
@@ -53,6 +130,7 @@ function renderPlayerLists() {
     knownPlayers.forEach((player) => {
         const item = document.createElement('li');
         item.textContent = player.name;
+        applyPlayerColor(item, player.color);
         (player.dead ? deadList : aliveList).appendChild(item);
     });
 
@@ -97,6 +175,7 @@ function renderKillPlayerPicker() {
         button.type = 'button';
         button.className = 'kill-player-target';
         button.textContent = player.name;
+        applyPlayerColor(button, player.color);
         button.addEventListener('click', () => {
             list.querySelectorAll('button').forEach((targetButton) => {
                 targetButton.disabled = true;
@@ -182,8 +261,17 @@ function updatePlayerRole(role) {
 
 socket.on('join_success', (data) => {
     document.getElementById('joinForm').style.display = 'none';
-    //document.getElementById('playerWaitingLobby').style.display = 'block';
-    document.getElementById('heading').textContent = "You're In! Waiting for Game to Start";
+    isWaitingLobby = data.status === 'lobby';
+    playerColor.style.display = isWaitingLobby ? 'flex' : 'none';
+    document.getElementById('heading').textContent = isWaitingLobby
+        ? "You're In! Waiting for Game to Start"
+        : "You're In!";
+    if (isValidPlayerColor(data.color)) {
+        selectedPlayerColor = data.color;
+        playerColorSelect.value = data.color;
+        updatePageBackground(data.color);
+        localStorage.setItem(colorStorageKey(playerNameInput.value), data.color);
+    }
 });
 
 socket.on('update_player_list', (players) => {
@@ -193,11 +281,14 @@ socket.on('update_player_list', (players) => {
     players.forEach(p => {
         const li = document.createElement('li');
         li.textContent = p.name;
+        applyPlayerColor(li, p.color);
         list.appendChild(li);
     });
 });
 
 socket.on('game_started', (data) => {
+    isWaitingLobby = false;
+    playerColor.style.display = 'none';
     sabotages = Array.isArray(data.sabotages) ? data.sabotages : [];
     updatePlayerRole(data.role);
 

@@ -18,6 +18,10 @@
                 <input id="playerName" type="text" placeholder="Enter Name" required autocomplete="name"><br>
                 <button type="submit"><span class="material-symbols-outlined">person_add</span></button>
             </form>
+            <div id="playerColor">
+                <h4>Click below to pick a color:</h4>
+                <input id="playerColorSelect" type="color">
+            </div>
         </div>
 
         <div id="gameplayView" style="display: none;">
@@ -70,7 +74,7 @@
         </div>
         <div id="emergencyPopup" role="alertdialog" aria-modal="true" aria-hidden="true" style="display:none;">
             <h1>Emergency Meeting Called!</h1>
-            <h2>Meet together and discuss</h2>
+            <h2>Meet together and discuss. You will vote after.</h2>
         </div>
         <div id="bodyFoundPopup" role="alertdialog" aria-modal="true" aria-hidden="true" style="display:none;">
             <h1>Dead Body Found!</h1>
@@ -83,7 +87,7 @@
         </div>
         <div id="deadPopup" role="alertdialog" aria-modal="true" aria-hidden="true" style="display:none;">
             <h1>You are Dead!</h1>
-            <h2>Finish tasks to win, you may not talk or vote.</h2>
+            <h2>Stay here until you are found. You may not talk or vote.</h2>
             <button id="confirmDead">Continue</button>
         </div>
         <div id="killPlayerPicker" class="kill-player-picker" role="dialog" aria-modal="true" aria-labelledby="killPlayerPickerTitle" aria-hidden="true" style="display:none;">

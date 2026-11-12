@@ -7,6 +7,14 @@ const playerList = document.getElementById('playerList');
 const emergencyMeetingButton = document.getElementById('hostEmergencyMeeting');
 const completeSabotageButton = document.getElementById('hostCompleteSabotage');
 
+function applyPlayerColor(element, color) {
+    if (typeof color !== 'string' || !/^#[0-9a-f]{6}$/i.test(color)) return;
+
+    element.classList.add('player-entry');
+    element.style.color = '#ffffff';
+    element.style.backgroundColor = color;
+}
+
 emergencyMeetingButton.addEventListener('click', () => {
     socket.emit('host:meeting_toggle', { roomCode: displayCode.textContent });
 });
@@ -64,6 +72,7 @@ socket.on('update_player_list', (players) => {
         const li = document.createElement('li');
         li.textContent = p.name;
         li.style.fontSize = '1.2rem';
+        applyPlayerColor(li, p.color);
         playerList.appendChild(li);
         activeGamePlayers.appendChild(li.cloneNode(true));
     });
