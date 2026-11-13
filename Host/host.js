@@ -6,13 +6,15 @@ const displayCode = document.getElementById('displayCode');
 const playerList = document.getElementById('playerList');
 const emergencyMeetingButton = document.getElementById('hostEmergencyMeeting');
 const completeSabotageButton = document.getElementById('hostCompleteSabotage');
+let resultsContinueTimeout = null;
+const { getPlayerTextColor, isValidPlayerColor } = window.PlayerColors;
 
 function applyPlayerColor(element, color) {
-    if (typeof color !== 'string' || !/^#[0-9a-f]{6}$/i.test(color)) return;
+    if (!isValidPlayerColor(color)) return;
 
     element.classList.add('player-entry');
-    element.style.color = '#ffffff';
     element.style.backgroundColor = color;
+    element.style.color = getPlayerTextColor(color);
 }
 
 emergencyMeetingButton.addEventListener('click', () => {
@@ -101,10 +103,30 @@ socket.on('host:started_game', (data) => {
     document.getElementById('activeGameRoomCode').textContent = `Room Code: ${data.roomCode}`;
 });
 
-socket.on('meeting:state', ({ active }) => {
-    emergencyMeetingButton.textContent = active
-        ? 'End Emergency Meeting (Start Voting)'
-        : 'Emergency Meeting';
+socket.on('meeting:state', ({ phase, active }) => {
+    clearTimeout(resultsContinueTimeout);
+    resultsContinueTimeout = null;
+    const currentPhase = phase || (active ? 'meeting' : 'none');
+    emergencyMeetingButton.textContent = currentPhase === 'meeting'
+        ? 'End Meeting (Start Voting)'
+        : currentPhase === 'voting'
+            ? 'End Voting'
+            : currentPhase === 'results'
+                ? 'Continue Past Results'
+            : 'Emergency Meeting';
+    emergencyMeetingButton.disabled = currentPhase === 'results';
+});
+
+socket.on('voting:results', (results) => {
+    if (!Array.isArray(results?.players)) return;
+    const revealCount = results.players.length + 1;
+    const interval = Number.isFinite(results.revealIntervalMs) ? results.revealIntervalMs : 2000;
+    const elapsed = Number.isFinite(results.revealElapsedMs) ? results.revealElapsedMs : 0;
+    const delay = Math.max(0, (revealCount - 1) * interval - elapsed);
+    resultsContinueTimeout = setTimeout(() => {
+        emergencyMeetingButton.disabled = false;
+        resultsContinueTimeout = null;
+    }, delay);
 });
 
 socket.on('sabotage:state', ({ active }) => {

@@ -212,6 +212,9 @@ form button {
     background-color:#111111;
     text-align:center;
 }
+#bodyFoundPicker .kill-player-picker-content {
+    border-color:#ffffff;
+}
 .sabotage-picker {
     position:fixed;
     inset:0;
@@ -221,6 +224,42 @@ form button {
     justify-content:center;
     padding:20px;
     background-color:rgba(0, 0, 0, 0.8);
+}
+.vote-confirm-picker {
+    position:fixed;
+    inset:0;
+    z-index:105;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background-color:rgba(0, 0, 0, 0.8);
+}
+.vote-confirm-content {
+    width:min(100%, 400px);
+    padding:20px;
+    border:3px solid #ffffff;
+    border-radius:8px;
+    background-color:#111111;
+    text-align:center;
+}
+.vote-confirm-content button {
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border:2px solid #ffffff;
+    border-radius:8px;
+    background-color:#111111;
+    color:white;
+    font:inherit;
+    cursor:pointer;
+}
+.vote-confirm-content button:hover {
+    background-color:#333333;
+}
+.vote-confirm-content button:disabled {
+    opacity:0.6;
+    cursor:wait;
 }
 .sabotage-picker-content {
     width:min(100%, 400px);
@@ -234,6 +273,7 @@ form button {
 }
 .kill-player-target,
 #closeKillPlayerPicker,
+#closeBodyFoundPicker,
 .sabotage-target,
 #closeSabotagePicker {
     width:100%;
@@ -248,9 +288,18 @@ form button {
 }
 .kill-player-target:hover,
 #closeKillPlayerPicker:hover,
+#closeBodyFoundPicker:hover,
 .sabotage-target:hover,
 #closeSabotagePicker:hover {
     background-color:#ff0000;
+}
+#bodyFoundPicker .kill-player-target,
+#bodyFoundPicker #closeBodyFoundPicker {
+    border-color:#ffffff;
+}
+#bodyFoundPicker .kill-player-target:hover,
+#bodyFoundPicker #closeBodyFoundPicker:hover {
+    border-color:#ffffff;
 }
 .kill-player-target:disabled {
     opacity:0.6;
@@ -275,7 +324,7 @@ form button {
     justify-content:center;
     background-color: rgba(0, 0, 0, 0.8);
     animation: meetingFlash 2.5s infinite;
-    z-index:100;
+    z-index:103;
 }
 #bodyFoundPopup {
     text-align:center;
@@ -293,6 +342,10 @@ form button {
     animation: meetingFlash 2.5s infinite;
     z-index:100;
 }
+#emergencyPopup,
+#bodyFoundPopup {
+    z-index:102;
+}
 #deadPopup {
     text-align:center;
     margin:0;
@@ -307,7 +360,7 @@ form button {
     justify-content:center;
     background-color: rgba(0, 0, 0, 0.8);
     animation: meetingFlash 2.5s infinite;
-    z-index:100;
+    z-index:104;
 }
 @keyframes meetingFlash {
     0% { background-color: rgba(0, 0, 0, 0.8); }
@@ -397,4 +450,80 @@ form button {
 #main {
     display:flex;
     flex-direction:column;
+}
+#voteScreen {
+    display:none;
+    width:100vw;
+    height:100vh;
+    margin:0;
+    padding:0px;
+    position:absolute;
+    background-color:#111111;
+    justify-content: center;
+    flex-direction:column;
+    top:0;
+    left:0;
+    overflow:auto;
+    z-index:90;
+}
+#voteScreen h2 {
+    text-align:center;
+    color:white;
+    margin-inline:auto;
+    padding:0;
+    padding-bottom:10px;
+}
+#votePlayerList {
+    list-style:none;
+    padding:0;
+    margin:15px;
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap:10px;
+    flex-grow:1;
+    overflow:scroll;
+}
+#votePlayerList li {
+    padding:8px;
+    border-radius:8px;
+    text-align:center;
+    color:white;
+    font-size:110%;
+    margin:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border: 3px solid white;
+    transition-duration:0.3s;
+    cursor:pointer;
+}
+#votePlayerList li:hover {
+    transform:scale(0.9);
+}
+.vote-option-alive {
+    border-color:#ffffff;
+}
+.vote-option-dead {
+    border-color:#ff0000 !important;
+    cursor:not-allowed !important;
+}
+.vote-option[aria-disabled="true"] {
+    cursor:not-allowed;
+}
+.vote-option[aria-disabled="false"]:hover {
+    border-color:#ffffff;
+}
+.vote-option-selected,
+.vote-option-selected:hover,
+.vote-option[aria-disabled="false"].vote-option-selected:hover {
+    border-color:#ffcc00 !important;
+}
+.vote-option:focus-visible {
+    border-color:#ffcc00;
+}
+.vote-result {
+    cursor:default !important;
+}
+.vote-result:hover {
+    transform:none !important;
 }

@@ -19,8 +19,9 @@
                 <button type="submit"><span class="material-symbols-outlined">person_add</span></button>
             </form>
             <div id="playerColor">
-                <h4>Click below to pick a color:</h4>
+                <h4>Choose a vibrant color (very light colors aren't available):</h4>
                 <input id="playerColorSelect" type="color">
+                <p id="playerColorHint" aria-live="polite"></p>
             </div>
         </div>
 
@@ -74,11 +75,11 @@
         </div>
         <div id="emergencyPopup" role="alertdialog" aria-modal="true" aria-hidden="true" style="display:none;">
             <h1>Emergency Meeting Called!</h1>
-            <h2>Meet together and discuss. You will vote after.</h2>
+            <h2>Meet together and discuss. Prepare to vote.</h2>
         </div>
         <div id="bodyFoundPopup" role="alertdialog" aria-modal="true" aria-hidden="true" style="display:none;">
             <h1>Dead Body Found!</h1>
-            <h2>A body has been discovered. Meet at player ####.</h2>
+            <h2 id="bodyFoundMessage">A body has been discovered. Meet at the reported location.</h2>
         </div>
         <div id="sabotageAlertPopup" role="alertdialog" aria-modal="true" aria-labelledby="sabotageAlertTitle" aria-describedby="sabotageAlertDescription" aria-hidden="true" style="display:none;">
             <h1 id="sabotageAlertTitle">Sabotage!</h1>
@@ -86,8 +87,8 @@
             <button id="confirmSabotageAlert" type="button">Continue</button>
         </div>
         <div id="deadPopup" role="alertdialog" aria-modal="true" aria-hidden="true" style="display:none;">
-            <h1>You are Dead!</h1>
-            <h2>Stay here until you are found. You may not talk or vote.</h2>
+            <h1 id="deadPopupTitle">You are Dead!</h1>
+            <h2 id="deadPopupMessage">Stay here until you are found. You may not talk or vote.</h2>
             <button id="confirmDead">Continue</button>
         </div>
         <div id="killPlayerPicker" class="kill-player-picker" role="dialog" aria-modal="true" aria-labelledby="killPlayerPickerTitle" aria-hidden="true" style="display:none;">
@@ -97,6 +98,13 @@
                 <button id="closeKillPlayerPicker" type="button" onclick="closeKillPlayerPicker()">Cancel</button>
             </div>
         </div>
+        <div id="bodyFoundPicker" class="kill-player-picker" role="dialog" aria-modal="true" aria-labelledby="bodyFoundPickerTitle" aria-hidden="true" style="display:none;">
+            <div class="kill-player-picker-content">
+                <h2 id="bodyFoundPickerTitle">Pick a Player to Report</h2>
+                <ul id="bodyFoundPlayerList" style="list-style: none; padding: 0;"></ul>
+                <button id="closeBodyFoundPicker" type="button" onclick="closeBodyFoundPicker()">Cancel</button>
+            </div>
+        </div>
         <div id="sabotagePicker" class="sabotage-picker" role="dialog" aria-modal="true" aria-labelledby="sabotagePickerTitle" aria-hidden="true" style="display:none;">
             <div class="sabotage-picker-content">
                 <h2 id="sabotagePickerTitle">Sabotage Options</h2>
@@ -104,10 +112,22 @@
                 <button id="closeSabotagePicker" type="button" onclick="closeSabotagePicker()">Cancel</button>
             </div>
         </div>
+        <div id="voteScreen" aria-hidden="true" style="display:none;">
+            <h2 id="voteScreenHeading">Pick the Impostor</h2>
+            <ul id="votePlayerList"></ul>
+        </div>
+        <div id="voteConfirmPopup" class="vote-confirm-picker" role="alertdialog" aria-modal="true" aria-labelledby="voteConfirmTitle" aria-hidden="true" style="display:none;">
+            <div class="vote-confirm-content">
+                <h2 id="voteConfirmTitle">Confirm Vote</h2>
+                <button id="confirmVoteYes" type="button">Yes</button>
+                <button id="confirmVoteNo" type="button">No</button>
+            </div>
+        </div>
         <div id="footer">
             <p></p>
         </div>
         <script src="/socket.io/socket.io.js"></script>
+        <script src="/System/player-colors.js"></script>
         <script src="player.js"></script>
     </body>
 </html>
