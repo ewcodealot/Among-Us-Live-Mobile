@@ -19,7 +19,7 @@
                 <button type="submit"><span class="material-symbols-outlined">person_add</span></button>
             </form>
             <div id="playerColor">
-                <h4>Choose a vibrant color (very light colors aren't available):</h4>
+                <h4>Choose a vibrant color</h4>
                 <input id="playerColorSelect" type="color">
                 <p id="playerColorHint" aria-live="polite"></p>
             </div>
@@ -121,6 +121,13 @@
                 <h2 id="voteConfirmTitle">Confirm Vote</h2>
                 <button id="confirmVoteYes" type="button">Yes</button>
                 <button id="confirmVoteNo" type="button">No</button>
+            </div>
+        </div>
+        <div id="gameResultPopup" class="game-result-popup" role="alertdialog" aria-modal="true" aria-labelledby="gameResultTitle" aria-describedby="gameResultMessage" aria-hidden="true" style="display:none;">
+            <div class="game-result-content">
+                <h1 id="gameResultTitle"></h1>
+                <p id="gameResultMessage"></p>
+                <button id="confirmGameResult" type="button" disabled>Continue (10)</button>
             </div>
         </div>
         <div id="footer">

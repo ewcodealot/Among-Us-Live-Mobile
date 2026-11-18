@@ -1,4 +1,6 @@
 (function(root) {
+    const distinctPlayerColors = ['#e63946', '#2a9d8f', '#f4a261', '#5e60ce', '#90be6d'];
+
     function getRelativeLuminance(color) {
         if (typeof color !== 'string' || !/^#[0-9a-f]{6}$/i.test(color)) return null;
 
@@ -49,7 +51,22 @@
         return isValidPlayerColor(color) ? color : randomPlayerColor();
     }
 
+    function getDistinctPlayerColor(usedColors = []) {
+        const used = new Set(usedColors
+            .filter(color => typeof color === 'string')
+            .map(color => color.toLowerCase()));
+        const availableColor = distinctPlayerColors.find(color => !used.has(color));
+        if (availableColor) return availableColor;
+
+        let color = randomPlayerColor();
+        while (used.has(color.toLowerCase())) {
+            color = randomPlayerColor();
+        }
+        return color;
+    }
+
     root.PlayerColors = {
+        getDistinctPlayerColor,
         getPlayerTextColor,
         isValidPlayerColor,
         randomPlayerColor

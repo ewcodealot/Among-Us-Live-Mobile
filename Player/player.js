@@ -12,6 +12,7 @@ let voteSubmitted = false;
 let voteSubmitting = false;
 let voteRevealIndex = 0;
 let voteRevealTimer = null;
+let gameResultCooldownTimer = null;
 const { getPlayerTextColor, isValidPlayerColor, randomPlayerColor } = window.PlayerColors;
 
 //Elements
@@ -669,6 +670,51 @@ socket.on('player:vote_status', ({ hasVoted, votedFor }) => {
 socket.on('voting:results', (results) => {
     if (currentMeetingPhase !== 'results' || !Array.isArray(results?.players)) return;
     showVotingResults(results);
+});
+
+socket.on('game:ended', ({ title, message } = {}) => {
+    clearTimeout(voteRevealTimer);
+    clearInterval(gameResultCooldownTimer);
+    currentMeetingPhase = 'none';
+    closeVoteConfirmPopup();
+    closeKillPlayerPicker();
+    closeBodyFoundPicker();
+    closeSabotagePicker();
+
+    ['emergencyPopup', 'bodyFoundPopup', 'sabotageAlertPopup', 'deadPopup', 'voteScreen']
+        .forEach((id) => {
+            const element = document.getElementById(id);
+            element.style.display = 'none';
+            element.setAttribute('aria-hidden', 'true');
+        });
+    document.getElementById('gameResultTitle').textContent = title || 'Game Over';
+    document.getElementById('gameResultMessage').textContent = message || 'The game has ended.';
+    const continueButton = document.getElementById('confirmGameResult');
+    let secondsRemaining = 10;
+    continueButton.disabled = true;
+    continueButton.textContent = `Continue (${secondsRemaining})`;
+    gameResultCooldownTimer = setInterval(() => {
+        secondsRemaining--;
+        if (secondsRemaining <= 0) {
+            clearInterval(gameResultCooldownTimer);
+            gameResultCooldownTimer = null;
+            continueButton.disabled = false;
+            continueButton.textContent = 'Continue';
+            return;
+        }
+        continueButton.textContent = `Continue (${secondsRemaining})`;
+    }, 1000);
+    const popup = document.getElementById('gameResultPopup');
+    popup.style.display = 'flex';
+    popup.setAttribute('aria-hidden', 'false');
+});
+
+document.getElementById('confirmGameResult').addEventListener('click', () => {
+    if (document.getElementById('confirmGameResult').disabled) return;
+    const popup = document.getElementById('gameResultPopup');
+    popup.style.display = 'none';
+    popup.setAttribute('aria-hidden', 'true');
+    window.location.reload();
 });
 
 socket.on('sabotage:started', ({ title, description }) => {

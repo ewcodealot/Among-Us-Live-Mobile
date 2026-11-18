@@ -7,6 +7,9 @@ const playerList = document.getElementById('playerList');
 const emergencyMeetingButton = document.getElementById('hostEmergencyMeeting');
 const completeSabotageButton = document.getElementById('hostCompleteSabotage');
 let resultsContinueTimeout = null;
+let gameResultCooldownTimer = null;
+let gameAnalyticsBlob = null;
+let gameAnalyticsFilename = '';
 const { getPlayerTextColor, isValidPlayerColor } = window.PlayerColors;
 
 function applyPlayerColor(element, color) {
@@ -131,6 +134,115 @@ socket.on('voting:results', (results) => {
 
 socket.on('sabotage:state', ({ active }) => {
     completeSabotageButton.disabled = !active;
+});
+
+socket.on('game:ended', ({ title, message } = {}) => {
+    clearTimeout(resultsContinueTimeout);
+    clearInterval(gameResultCooldownTimer);
+    resultsContinueTimeout = null;
+    emergencyMeetingButton.disabled = true;
+    completeSabotageButton.disabled = true;
+
+    document.getElementById('gameResultTitle').textContent = title || 'Game Over';
+    document.getElementById('gameResultMessage').textContent = message || 'The game has ended.';
+    const continueButton = document.getElementById('confirmGameResult');
+    let secondsRemaining = 10;
+    continueButton.disabled = true;
+    continueButton.textContent = `Continue (${secondsRemaining})`;
+    gameResultCooldownTimer = setInterval(() => {
+        secondsRemaining--;
+        if (secondsRemaining <= 0) {
+            clearInterval(gameResultCooldownTimer);
+            gameResultCooldownTimer = null;
+            continueButton.disabled = false;
+            continueButton.textContent = 'Continue';
+            return;
+        }
+        continueButton.textContent = `Continue (${secondsRemaining})`;
+    }, 1000);
+    const popup = document.getElementById('gameResultPopup');
+    popup.style.display = 'flex';
+    popup.setAttribute('aria-hidden', 'false');
+});
+
+document.getElementById('confirmGameResult').addEventListener('click', () => {
+    if (document.getElementById('confirmGameResult').disabled) return;
+    const popup = document.getElementById('gameResultPopup');
+    popup.style.display = 'none';
+    popup.setAttribute('aria-hidden', 'true');
+    window.location.reload();
+});
+
+function downloadGameAnalytics() {
+    if (!gameAnalyticsBlob) return;
+
+    const downloadLink = document.createElement('a');
+    downloadLink.href = URL.createObjectURL(gameAnalyticsBlob);
+    downloadLink.download = gameAnalyticsFilename;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    downloadLink.remove();
+    setTimeout(() => URL.revokeObjectURL(downloadLink.href), 1000);
+}
+
+document.getElementById('downloadGameAnalytics').addEventListener('click', downloadGameAnalytics);
+
+socket.on('game:analytics', (analytics) => {
+    if (!analytics || typeof analytics !== 'object') return;
+
+    const clean = (value) => String(value ?? '').replace(/[\r\n\t]+/g, ' ').trim();
+    const durationSeconds = Number(analytics.durationMs) / 1000;
+    const lines = [
+        'Among Us Live - Game Analytics',
+        `Room: ${clean(analytics.roomCode)}`,
+        `Started: ${clean(analytics.startedAt)}`,
+        `Ended: ${clean(analytics.endedAt)}`,
+        `Duration: ${durationSeconds.toFixed(1)} seconds`,
+        `Winner: ${clean(analytics.winner)} (${clean(analytics.endReason)})`,
+        `Players in game: ${clean(analytics.playerCount)}`,
+        `Total votes cast: ${clean(analytics.totalVotes)}`,
+        '',
+        `Players (${Array.isArray(analytics.players) ? analytics.players.length : 0}):`
+    ];
+
+    (Array.isArray(analytics.players) ? analytics.players : []).forEach((player, index) => {
+        lines.push(
+            `${index + 1}. ${clean(player.name)} | Role: ${clean(player.role)} | ` +
+            `Connected: ${player.connected ? 'Yes' : 'No'} | Dead: ${player.dead ? 'Yes' : 'No'} | ` +
+            `Voted out: ${player.votedOut ? 'Yes' : 'No'} | Tasks: ${clean(player.tasksCompleted)}/${clean(player.taskCount)}`
+        );
+    });
+
+    const voteHistory = Array.isArray(analytics.voteHistory) ? analytics.voteHistory : [];
+    lines.push('', `Voting history (${voteHistory.length} meetings):`);
+    voteHistory.forEach((meeting) => {
+        lines.push(`Meeting ${clean(meeting.meeting)} - ${clean(meeting.recordedAt)}`);
+        const votes = Array.isArray(meeting.votes) ? meeting.votes : [];
+        votes.forEach((vote) => lines.push(`  ${clean(vote.voter)} voted for ${clean(vote.target)}`));
+        const tally = Array.isArray(meeting.tally) ? meeting.tally : [];
+        tally.forEach((entry) => lines.push(`  ${clean(entry.name)}: ${clean(entry.votes)} vote(s)`));
+        lines.push(`  Skip votes: ${clean(meeting.skipVotes)}`);
+        lines.push(`  Tied: ${meeting.tied ? 'Yes' : 'No'}`);
+        lines.push(`  Eliminated: ${clean(meeting.eliminated || 'Nobody')}`);
+    });
+
+    const killHistory = Array.isArray(analytics.killHistory) ? analytics.killHistory : [];
+    lines.push('', `Kills (${killHistory.length}):`);
+    killHistory.forEach((kill) =>
+        lines.push(`  ${clean(kill.timestamp)} - ${clean(kill.impostor)} killed ${clean(kill.target)}`)
+    );
+
+    const activityLog = Array.isArray(analytics.activityLog) ? analytics.activityLog : [];
+    lines.push('', 'Activity log:');
+    activityLog.forEach((entry) =>
+        lines.push(`  ${clean(entry.timestamp)} - ${clean(entry.message)}`)
+    );
+
+    gameAnalyticsBlob = new Blob([lines.join('\r\n')], { type: 'text/plain;charset=utf-8' });
+    const fileRoomCode = clean(analytics.roomCode).replace(/[^a-z0-9_-]/gi, '_');
+    gameAnalyticsFilename = `among-us-live-${fileRoomCode}-analytics.txt`;
+    document.getElementById('downloadGameAnalytics').disabled = false;
+    downloadGameAnalytics();
 });
 
 //Collapsibles
