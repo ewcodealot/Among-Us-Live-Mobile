@@ -187,7 +187,7 @@ function downloadGameAnalytics() {
 
 document.getElementById('downloadGameAnalytics').addEventListener('click', downloadGameAnalytics);
 
-socket.on('game:analytics', (analytics) => {
+socket.on('host:game_analytics', (analytics) => {
     if (!analytics || typeof analytics !== 'object') return;
 
     const clean = (value) => String(value ?? '').replace(/[\r\n\t]+/g, ' ').trim();
@@ -242,7 +242,6 @@ socket.on('game:analytics', (analytics) => {
     const fileRoomCode = clean(analytics.roomCode).replace(/[^a-z0-9_-]/gi, '_');
     gameAnalyticsFilename = `among-us-live-${fileRoomCode}-analytics.txt`;
     document.getElementById('downloadGameAnalytics').disabled = false;
-    downloadGameAnalytics();
 });
 
 //Collapsibles
